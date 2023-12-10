@@ -22,3 +22,4 @@ echo -n '/var/lib/dbus/machine-id: ' && cat /var/lib/dbus/machine-id
 echo '-----'
 # Reminder for changing the hostname if needed
 echo 'Change hostname: sudo hostnamectl set-hostname NEW_HOSTNAME'
+echo 'Also update /etc/hosts'
