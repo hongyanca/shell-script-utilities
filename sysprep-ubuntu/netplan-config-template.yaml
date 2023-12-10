@@ -1,0 +1,25 @@
+# This is the network config written by 'subiquity'
+network:
+  version: 2
+  ethernets:
+    ens160:
+      dhcp-identifier: mac
+      dhcp4: true
+#      dhcp4: no
+#      addresses:
+#        - 192.168.0.37/24
+#      nameservers:
+#        addresses: [1.1.1.1, 8.8.8.8, 2606:4700:4700::1111]
+#      routes:
+#        - to: default
+#          via: 192.168.0.1
+#      dhcp6: true
+#    ens224:
+#      dhcp-identifier: mac
+#      dhcp4: no
+#      addresses:
+#        - 10.1.1.1/24
+#      nameservers:
+#        addresses: [1.1.1.1, 8.8.8.8, 2606:4700:4700::1111]
+#      dhcp6: true
+
