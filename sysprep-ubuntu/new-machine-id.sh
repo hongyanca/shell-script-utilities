@@ -19,6 +19,11 @@ echo 'New machine-id'
 echo -n '/etc/machine-id: ' && cat /etc/machine-id
 echo -n '/var/lib/dbus/machine-id: ' && cat /var/lib/dbus/machine-id
 
+# Regenerate OpenSSH Host Keys
+sudo rm -v /etc/ssh/ssh_host_*
+sudo dpkg-reconfigure openssh-server
+sudo systemctl restart ssh
+
 echo '-----'
 # Reminder for changing the hostname if needed
 echo 'Change hostname: sudo hostnamectl set-hostname NEW_HOSTNAME'
