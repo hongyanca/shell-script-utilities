@@ -1,6 +1,11 @@
 #!/bin/bash
 
+# Setup sudo without password
+# Or run sudo visudo and add a line to the end of the file: ubuntu ALL=(ALL) NOPASSWD:ALL
+echo "ubuntu ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 sudo usermod -aG sudo ubuntu
+
+sudo rm /etc/motd
 
 ################################################################################
 # Disable swap
@@ -22,42 +27,27 @@ sudo sed -i '/weekly/a \\tmaxsize 100M' /etc/logrotate.d/rsyslog
 sudo sed -i '/\[Journal\]/a SystemMaxUse=100M' /etc/systemd/journald.conf
 
 ################################################################################
-# Add repos
-sudo apt-get install -y apt-transport-https ca-certificates curl
+# Add repos to Apt sources
+sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 # Add git-lfs repo
-echo "Adding git-lfs repo..."
+echo "Adding git-lfs repo to apt sources..."
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
 # Add Docker repo
-echo "Adding Docker repo for containerd..."
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/docker-archive-keyring.gpg
-sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+echo "Adding Docker repo for to apt sources..."
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
 
 sudo apt-get install -y --install-recommends linux-generic-hwe-22.04 \
   bzip2 gcc make autojump p7zip p7zip-full p7zip-rar zsh \
   cifs-utils nfs-common git-lfs conntrackd containerd.io
-sudo apt autoremove
 
-################################################################################
-echo "Getting ready for k8s..."
-# Forwarding IPv4 and letting iptables see bridged traffic
-cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
-overlay
-br_netfilter
-EOF
-
-sudo modprobe overlay
-sudo modprobe br_netfilter
-lsmod | grep overlay
-lsmod | grep br_netfilter
-
-echo -e "net.core.rmem_max=26214400\nnet.core.rmem_default=26214400\n\nnet.bridge.bridge-nf-call-ip6tables = 1\nnet.bridge.bridge-nf-call-iptables = 1\nnet.ipv4.conf.default.rp_filter=1\nnet.ipv4.conf.all.rp_filter=1\nnet.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1\nnet.netfilter.nf_conntrack_max=524288" | sudo tee -a /etc/sysctl.conf
-
-sudo sysctl -p
-sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
-
-# Configure containerd and start service
-sudo mkdir -p /etc/containerd
-sudo containerd config default | sudo tee /etc/containerd/config.toml
+sudo apt update; sudo apt upgrade; sudo apt autoremove -y
 
 ################################################################################
 echo "Installing btop..."
@@ -96,5 +86,22 @@ echo "alias lla='ls -la'" >> ~/.bashrc
 echo "alias lt='ls --tree'" >> ~/.bashrc
 echo "" >> ~/.bashrc
 echo "alias k='kubectl'" >> ~/.bashrc
-echo "" >> ~/.bashrc
-source ~/.bashrc
+
+################################################################################
+Prep_K8S_Env() {
+  echo "Getting ready for k8s..."
+  # Forwarding IPv4 and letting iptables see bridged traffic
+  echo -e "overlay\nbr_netfilter" | sudo tee -a /etc/modules-load.d/k8s.conf
+  sudo modprobe overlay
+  sudo modprobe br_netfilter
+  lsmod | grep overlay
+  lsmod | grep br_netfilter
+
+  echo -e "net.core.rmem_max=26214400\nnet.core.rmem_default=26214400\n\nnet.bridge.bridge-nf-call-ip6tables = 1\nnet.bridge.bridge-nf-call-iptables = 1\nnet.ipv4.conf.default.rp_filter=1\nnet.ipv4.conf.all.rp_filter=1\nnet.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1\nnet.netfilter.nf_conntrack_max=524288" | sudo tee -a /etc/sysctl.conf
+  sudo sysctl -p
+  sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
+
+  # Configure containerd and start service
+  sudo mkdir -p /etc/containerd
+  sudo containerd config default | sudo tee /etc/containerd/config.toml
+}
