@@ -1,0 +1,9 @@
+:80 {
+    # Reverse proxy to the backend server
+    reverse_proxy https://10.1.4.104:8443 {
+        # Trust the self-signed certificate
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+}

@@ -1,0 +1,3 @@
+TIMEZONE=America/Edmonton
+WORKING_DIR=/apps/caddy-ceph-dashboard
+TUNNEL_TOKEN=[CLOUDFLARED_TUNNEL_TOKEN]

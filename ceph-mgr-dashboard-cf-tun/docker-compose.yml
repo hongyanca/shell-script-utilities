@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  caddy:
+    container_name: caddy-ceph-dashboard
+    image: caddy
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${WORKING_DIR}/Caddyfile:/etc/caddy/Caddyfile
+      - ${WORKING_DIR}/config:/config
+      - ${WORKING_DIR}/data:/data
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:10080 || exit 1
+      interval: 30s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
+
+  tunnel:
+    container_name: cloudflared-tunnel-ceph-dashboard
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - caddy
+    links:
+      - caddy:frontend
