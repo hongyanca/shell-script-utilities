@@ -43,11 +43,10 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 
-sudo apt-get install -y --install-recommends linux-generic-hwe-22.04 \
+sudo NEEDRESTART_MODE=a apt-get install -y --install-recommends \
   bzip2 gcc make autojump p7zip p7zip-full p7zip-rar zsh \
-  cifs-utils nfs-common git-lfs conntrackd containerd.io
-
-sudo apt update; sudo apt upgrade; sudo apt autoremove -y
+  cifs-utils nfs-common git-lfs conntrackd containerd.io \
+  ubuntu-advantage-tools ntp
 
 ################################################################################
 echo "Installing btop..."
@@ -61,9 +60,16 @@ rm -rf btop*
 echo "Installing lsd..."
 cd ~
 wget https://github.com/lsd-rs/lsd/releases/download/v1.0.0/lsd_1.0.0_amd64.deb
-sudo apt install ./lsd_1.0.0_amd64.deb
+sudo NEEDRESTART_MODE=a apt-get install ./lsd_1.0.0_amd64.deb
 sudo ln -sf /usr/bin/lsd /usr/local/bin/lsd
 rm lsd*.deb
+
+################################################################################
+sudo apt-get update
+sudo NEEDRESTART_MODE=a apt-get -o APT::Get::Always-Include-Phased-Updates=true upgrade -y
+sudo NEEDRESTART_MODE=a apt-get install linux-headers-generic linux-headers-virtual linux-image-virtual linux-virtual -y
+sudo apt-get install -y --install-recommends linux-generic-hwe-22.04
+sudo apt-get autoremove -y
 
 ################################################################################
 cat << EOF > ~/.nanorc
