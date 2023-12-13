@@ -1,5 +1,6 @@
 :80 {
     # Reverse proxy to the backend server
+    # The backend IP is this node's NIC IP
     reverse_proxy https://10.1.4.104:8443 {
         # Trust the self-signed certificate
         transport http {
