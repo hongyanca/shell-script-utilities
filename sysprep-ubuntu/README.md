@@ -6,6 +6,23 @@ This repository hosts a collection of utility scripts and templates tailored for
 
 ## Scripts
 
+### init.sh
+
+```shell
+wget https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/sysprep-ubuntu/init.sh
+```
+
+The `init.sh` script is used for Ubuntu server initialization. It performs the following tasks:
+
+1. Setup user `ubuntu` to use `sudo` without password prompt
+2. Remove `/etc/motd`
+3. Turn off swap
+4. Set timezone
+5. Add git-lfs and Docker repo
+6. Install common packages
+7. Install Ubuntu HWE kernel
+8. Optionally prepair for K8S installation
+
 ### new-machine-id.sh
 
 The `new-machine-id.sh` script is used for regenerating the machine ID of your Linux system. This might be necessary in cases where you've cloned a system and need to ensure it has a unique identifier.
