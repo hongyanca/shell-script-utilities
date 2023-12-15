@@ -6,13 +6,13 @@ This repository hosts a collection of utility scripts and templates tailored for
 
 ## Scripts
 
-### init.sh
+### ubuntu-init.sh
 
 ```shell
-wget https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/sysprep-ubuntu/init.sh
+wget https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/sysprep-ubuntu/ubunut-init.sh
 ```
 
-The `init.sh` script is used for Ubuntu server initialization. It performs the following tasks:
+The `ubuntu-init.sh` script is used for Ubuntu server initialization. It performs the following tasks:
 
 1. Setup user `ubuntu` to use `sudo` without password prompt
 2. Remove `/etc/motd`
