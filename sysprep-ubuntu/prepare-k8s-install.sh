@@ -19,6 +19,7 @@ sudo sed -i 's/sandbox_image = "registry.k8s.io\/pause:3.6"/sandbox_image = "reg
 # Use the SystemdCgroup driver
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
 
+echo "\n-------------------"
 cat /etc/containerd/config.toml | grep 'pause:3'
 cat /etc/containerd/config.toml | grep 'SystemdCgroup'
 

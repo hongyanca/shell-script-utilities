@@ -46,7 +46,7 @@ sudo apt-get update
 sudo NEEDRESTART_MODE=a apt-get install -y --install-recommends \
   bzip2 gcc make autojump p7zip p7zip-full p7zip-rar zsh \
   cifs-utils nfs-common git-lfs conntrackd containerd.io \
-  ubuntu-advantage-tools ntp iperf3
+  ubuntu-advantage-tools ntp iperf3 jq
 
 ################################################################################
 echo "Installing btop..."
