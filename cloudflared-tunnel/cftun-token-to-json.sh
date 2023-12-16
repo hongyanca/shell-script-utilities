@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Improved Decode JWT Token Script
+# Convert cloudflared tunnel JWT token to credentials.json
 
 # Check if a token is provided
 if [ "$#" -ne 1 ]; then
