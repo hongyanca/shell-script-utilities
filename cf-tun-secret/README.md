@@ -1,0 +1,1 @@
+This script will take a JWT token, decode its header, and covert the result into cloudflared UUID.json format. 
