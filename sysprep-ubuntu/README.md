@@ -24,6 +24,12 @@ The `ubuntu-init.sh` script is used for Ubuntu server initialization. It perform
 
 ### prepare-k8s-install.sh
 
+```
+wget https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/sysprep-ubuntu/prepare-k8s-install.sh
+```
+
+
+
 The `prepare-k8s-install.sh` scrip is used for Kubernetes installation preparation. It performs the following tasks:
 
 1. Enable forwarding IPv4 and letting iptables see bridged traffic.
