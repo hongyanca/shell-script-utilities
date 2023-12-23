@@ -14,14 +14,22 @@ wget https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/sys
 
 The `ubuntu-init.sh` script is used for Ubuntu server initialization. It performs the following tasks:
 
-1. Setup user `ubuntu` to use `sudo` without password prompt
-2. Remove `/etc/motd`
-3. Turn off swap
-4. Set timezone
-5. Add git-lfs and Docker repo
-6. Install common packages
-7. Install Ubuntu HWE kernel
-8. Optionally prepair for K8S installation
+1. Setup user `ubuntu` to use `sudo` without password prompt.
+2. Remove `/etc/motd`.
+3. Turn off swap.
+4. Set timezone.
+5. Add git-lfs and Docker repo.
+6. Install common packages.
+7. Install Ubuntu HWE kernel.
+
+### prepare-k8s-install.sh
+
+The `prepare-k8s-install.sh` scrip is used for Kubernetes installation preparation. It performs the following tasks:
+
+1. Enable forwarding IPv4 and letting iptables see bridged traffic.
+2. Override the sandbox (pause) image from `registry.k8s.io/pause:3.6` to `registry.k8s.io/pause:3.9`.
+3. Use the `SystemdCgroup` driver in `/etc/containerd/config.toml` with `runc`.
+4. Discard the compressed layer data after unpacking.
 
 ### new-machine-id.sh
 
