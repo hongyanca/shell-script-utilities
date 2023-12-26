@@ -5,6 +5,10 @@
 # such operations. Additionally, ensure that /dev/sda is indeed the disk you want to
 # modify, as this script will apply changes directly to it.
 
+# Move secondary GPT header to end of disk
+# https://superuser.com/questions/660309/live-resize-of-a-gpt-partition-on-linux/1156509#1156509
+sudo sgdisk -e /dev/sda
+
 # Find the last partition number of /dev/sda
 last_part=$(sudo parted /dev/sda -ms unit MB print | tail -n +3 | cut -d':' -f1 | sort -nr | head -n1)
 
@@ -13,6 +17,7 @@ new_part_num=$((last_part + 1))
 
 # Get the end of the last partition in MB
 end_of_last_part=$(sudo parted /dev/sda -ms unit MB print | grep "^${last_part}:" | cut -d':' -f3 | sed 's/MB//')
+end_of_last_part=$((end_of_last_part + 1))
 
 read -p "Are you sure you want to create a new partition (/dev/sda${new_part_num}) starting at ${end_of_last_part}MB? [y/N]: " confirmation
 confirmation=${confirmation:-N} # Set default value to 'N'
@@ -58,4 +63,3 @@ echo 'Resize the filesystem'
 sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 # Display disk space usage to confirm the resize operation.
 df -h
-
