@@ -9,7 +9,7 @@ This repository hosts a collection of utility scripts and templates tailored for
 ### ubuntu-init.sh
 
 ```shell
-wget https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/sysprep-ubuntu/ubunut-init.sh
+wget https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/sysprep-ubuntu/ubuntu-init.sh
 ```
 
 The `ubuntu-init.sh` script is used for Ubuntu server initialization. It performs the following tasks:
