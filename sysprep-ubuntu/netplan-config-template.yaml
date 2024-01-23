@@ -1,4 +1,8 @@
-# This is the network config written by 'subiquity'
+# To disable cloud-init's network configuration capabilities, write a file
+# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+
+# Create /etc/netplan/00-installer-config.yaml file with the following:
 network:
   version: 2
   ethernets:
