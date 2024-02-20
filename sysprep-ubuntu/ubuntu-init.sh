@@ -38,21 +38,21 @@ sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+	"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
+	sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 sudo apt-get update
 
 sudo NEEDRESTART_MODE=a apt-get install -y --install-recommends \
-  bzip2 gcc make autojump p7zip p7zip-full p7zip-rar zsh \
-  cifs-utils nfs-common git-lfs conntrackd containerd.io \
-  ubuntu-advantage-tools ntp iperf3 jq
+	bzip2 gcc make autojump p7zip p7zip-full p7zip-rar zsh \
+	cifs-utils nfs-common git-lfs conntrackd containerd.io \
+	ubuntu-advantage-tools ntp iperf3 jq
 
 ################################################################################
 echo "Installing btop..."
 cd ~
 wget https://github.com/aristocratos/btop/releases/download/v1.2.13/btop-x86_64-linux-musl.tbz
-tar -xjf  btop-x86_64-linux-musl.tbz
+tar -xjf btop-x86_64-linux-musl.tbz
 sudo mv btop/bin/btop /usr/local/bin
 rm -rf btop*
 
@@ -74,7 +74,7 @@ sudo NEEDRESTART_MODE=a apt-get install linux-headers-generic linux-headers-virt
 sudo apt-get autoremove -y
 
 ################################################################################
-cat << EOF > ~/.nanorc
+cat <<EOF >~/.nanorc
 set softwrap
 set tabsize 4
 set tabstospaces
@@ -85,12 +85,21 @@ EOF
 sudo cp ~/.nanorc /root/.nanorc
 
 ################################################################################
-echo "" >> ~/.bashrc
-echo "alias ls='lsd'" >> ~/.bashrc
-echo "alias l='ls -l'" >> ~/.bashrc
-echo "alias la='ls -a'" >> ~/.bashrc
-echo "alias ll='ls -la'" >> ~/.bashrc
-echo "alias lla='ls -la'" >> ~/.bashrc
-echo "alias lt='ls --tree'" >> ~/.bashrc
-echo "" >> ~/.bashrc
-echo "alias k='kubectl'" >> ~/.bashrc
+echo "" >>~/.bashrc
+echo "alias ls='lsd'" >>~/.bashrc
+echo "alias l='ls -l'" >>~/.bashrc
+echo "alias la='ls -a'" >>~/.bashrc
+echo "alias ll='ls -la'" >>~/.bashrc
+echo "alias lla='ls -la'" >>~/.bashrc
+echo "alias lt='ls --tree'" >>~/.bashrc
+echo "" >>~/.bashrc
+echo "alias k='kubectl'" >>~/.bashrc
+
+################################################################################
+# Install pre-built NeoVim binaries for Linux systems.
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+sudo rm -rf /opt/nvim
+sudo tar -C /opt -xzf nvim-linux64.tar.gz
+sudo rm -rf /usr/bin/nvim
+sudo ln -s /opt/nvim-linux64/bin/nvim /usr/bin/nvim
+rm nvim-linux64.tar.gz
