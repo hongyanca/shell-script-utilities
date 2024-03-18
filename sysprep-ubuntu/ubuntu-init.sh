@@ -51,7 +51,7 @@ sudo NEEDRESTART_MODE=a apt-get install -y --install-recommends \
 ################################################################################
 echo "Installing btop..."
 cd ~
-wget https://github.com/aristocratos/btop/releases/download/v1.2.13/btop-x86_64-linux-musl.tbz
+wget https://github.com/aristocratos/btop/releases/download/v1.3.2/btop-x86_64-linux-musl.tbz
 tar -xjf btop-x86_64-linux-musl.tbz
 sudo mv btop/bin/btop /usr/local/bin
 rm -rf btop*
