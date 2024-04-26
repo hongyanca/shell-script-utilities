@@ -59,8 +59,8 @@ rm -rf btop*
 ################################################################################
 echo "Installing lsd..."
 cd ~
-wget https://github.com/lsd-rs/lsd/releases/download/v1.0.0/lsd_1.0.0_amd64.deb
-sudo NEEDRESTART_MODE=a apt-get install ./lsd_1.0.0_amd64.deb
+wget https://github.com/lsd-rs/lsd/releases/download/v1.1.2/lsd_1.1.2_amd64.deb
+sudo NEEDRESTART_MODE=a apt-get install ./lsd_1.1.2_amd64.deb
 sudo ln -sf /usr/bin/lsd /usr/local/bin/lsd
 rm lsd*.deb
 
