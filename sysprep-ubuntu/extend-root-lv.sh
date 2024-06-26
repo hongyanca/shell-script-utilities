@@ -2,7 +2,7 @@
 
 # Reference https://gist.github.com/rafaelfoster/8741314
 # Rescan devices to detect new space when disk is resized
-echo 1 | sudo tee /sys/block/sda/device/rescan
+echo 1 | sudo tee /sys/block/sda/device/rescan >/dev/null
 
 # Please remember, modifying disk partitions can be risky and may result in data loss.
 # Always ensure that you have a backup of your important data before proceeding with
