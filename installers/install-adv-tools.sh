@@ -3,6 +3,18 @@
 # This script automates the process of downloading, extracting, and installing
 # the latest release of a specified utility from GitHub.
 
+# Define color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Check if jq is available
+if ! command -v jq &>/dev/null; then
+  echo "jq is required but not installed. Please install jq first."
+  exit 1
+fi
+
 # Function to install the latest release of a GitHub repository
 # Usage: install_latest_release "repo" "asset_suffix" ["alt_util_name"] ["symlink_name"]
 # Parameters:
@@ -54,6 +66,9 @@ install_latest_release() {
   fi
   sudo install "$decomp_dir/$util_bin_fn" /usr/local/bin
 
+  # Extract the last part of the path if util_bin_fn contains /
+  util_bin_fn=$(basename "$util_bin_fn")
+
   # Check if the utility has been installed
   if [ -f "/usr/local/bin/$util_bin_fn" ]; then
     # Get the file creation time in seconds since epoch
@@ -63,10 +78,12 @@ install_latest_release() {
 
     # Check if the file was created within the last minute (60 seconds)
     if [ $time_diff -le 60 ]; then
-      echo "$util_name has been installed successfully."
+      echo -e "${GREEN}✔ ${BLUE}$util_name${NC} has been installed successfully."
     else
       echo "$util_name has already been installed previously."
     fi
+  else
+    echo -e "${RED}Failed to install $util_name.${NC}"
   fi
 
   # Create a symbolic link if the fourth argument is provided
@@ -75,11 +92,13 @@ install_latest_release() {
     ls -lh "/usr/local/bin/$symlink_name"
   fi
   ls -lh "/usr/local/bin/$util_bin_fn"
+  "/usr/local/bin/$util_bin_fn" --version
 
   printf "Cleaning up...\n\n"
   rm -rf "$asset_filename" "$decomp_dir"
 }
 
+install_latest_release "neovim/neovim" "linux64.tar.gz" "bin/nvim"
 install_latest_release "junegunn/fzf" "linux_amd64.tar.gz"
 install_latest_release "sharkdp/fd" "x86_64-unknown-linux-gnu.tar.gz"
 install_latest_release "sharkdp/bat" "x86_64-unknown-linux-gnu.tar.gz"
