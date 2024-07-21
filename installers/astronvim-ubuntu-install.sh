@@ -8,7 +8,13 @@ rm nvim-linux64.tar.gz
 
 echo 'export PATH="/opt/nvim-linux64/bin:$PATH"' >>~/.bashrc
 
-sudo apt-get install -y python3-pip python3.10-venv python3-neovim tar unzip gcc make autojump p7zip libbz2-dev wget ripgrep fzf
+sudo apt-get install -y python3-pip python3.10-venv python3-neovim tar unzip gcc make autojump p7zip libbz2-dev wget ripgrep
+
+export FZF_VERSION=$(curl -s "https://api.github.com/repos/junegunn/fzf/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+curl -Lo fzf.tar.gz "https://github.com/junegunn/fzf/releases/download/v${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz"
+tar xvf fzf.tar.gz fzf
+sudo install fzf /usr/local/bin
+rm -f fzf*
 
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
 curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
