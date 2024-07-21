@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script automates the process of downloading, extracting, and installing
-# the latest release of a specified utility from GitHub.
+# the latest release of modern Linux utilities from GitHub.
 
 # Define color codes
 RED='\033[0;31m'
@@ -9,11 +9,48 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Check if jq is available
-if ! command -v jq &>/dev/null; then
-  echo "jq is required but not installed. Please install jq first."
-  exit 1
-fi
+# Function to install a required package based on the distribution
+install_required_package() {
+  package=$1
+
+  # Get the ID_LIKE value from /etc/os-release
+  id_like=$(grep "^ID_LIKE=" /etc/os-release | cut -d= -f2 | tr -d '"')
+
+  # Function to check if a package is installed
+  is_installed() {
+    if command -v "$package" &>/dev/null; then
+      return 0
+    else
+      return 1
+    fi
+  }
+
+  # Check if the package is already installed
+  if is_installed; then
+    echo -e "${GREEN}✔ ${BLUE}$package${NC}"
+    return 0
+  fi
+
+  # Check if ID_LIKE contains 'rhel' or 'debian' and install the package
+  if [[ "$id_like" == *"rhel"* ]]; then
+    echo "Detected RHEL-based distribution. Using dnf to install $package."
+    sudo dnf install -y "$package"
+  elif [[ "$id_like" == *"debian"* ]]; then
+    echo "Detected Debian-based distribution. Using apt-get to install $package."
+    sudo apt-get update
+    sudo apt-get install -y "$package"
+  else
+    echo "Unsupported distribution."
+    return 1
+  fi
+}
+
+echo "Installing required packages..."
+REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "autojump" "git")
+# Install each package in the packages array
+for package in "${REQUIRED_PKGS[@]}"; do
+  install_required_package "$package"
+done
 
 # Function to install the latest release of a GitHub repository
 # Usage: install_latest_release "repo" "asset_suffix" ["alt_util_name"] ["symlink_name"]
@@ -28,7 +65,7 @@ fi
 install_latest_release() {
   local repo=$1 asset_suffix=$2 alt_util_name=$3 symlink_name=$4
   local latest_release asset_filename asset_url decomp_dir
-  local util_bin_fn util_name
+  local util_bin_fn util_name util_path
 
   util_name=$(echo "$repo" | awk -F'/' '{print $2}')
   latest_release=$(curl -s "https://api.github.com/repos/$repo/releases/latest")
@@ -38,25 +75,11 @@ install_latest_release() {
   echo "Downloading $util_name from $asset_url"
   wget -q --show-progress -O "$asset_filename" "$asset_url"
 
-  # Remove the .tar.gz or .tgz extension to get the decompression directory name
-  if [[ "$asset_filename" == *.tar.gz ]]; then
-    decomp_dir="${asset_filename%.tar.gz}"
-  elif [[ "$asset_filename" == *.tgz ]]; then
-    decomp_dir="${asset_filename%.tgz}"
-  else
-    decomp_dir="$asset_filename"
-  fi
-
+  decomp_dir="tmp-$util_name-install"
   echo "Extracting $asset_filename to $decomp_dir"
-  # Check if the tarball contains a directory
-  if tar -tzf "$asset_filename" | grep -q '/$'; then
-    # The tarball contains a directory
-    tar -xf "$asset_filename"
-  else
-    # The tarball does not contain a directory
-    mkdir -p "$decomp_dir"
-    tar -xf "$asset_filename" -C "$decomp_dir"
-  fi
+  rm -rf "$decomp_dir"
+  mkdir -p "$decomp_dir"
+  tar -xf "$asset_filename" -C "$decomp_dir"
 
   # Use the provided alternative utility name if given
   if [ -n "$alt_util_name" ]; then
@@ -64,7 +87,9 @@ install_latest_release() {
   else
     util_bin_fn=$util_name
   fi
-  sudo install "$decomp_dir/$util_bin_fn" /usr/local/bin
+  # Find the executable file
+  util_path=$(find "$decomp_dir" -type f -name "$util_bin_fn" -executable 2>/dev/null)
+  sudo install "$util_path" /usr/local/bin
 
   # Extract the last part of the path if util_bin_fn contains /
   util_bin_fn=$(basename "$util_bin_fn")
@@ -98,7 +123,9 @@ install_latest_release() {
   rm -rf "$asset_filename" "$decomp_dir"
 }
 
-install_latest_release "neovim/neovim" "linux64.tar.gz" "bin/nvim"
+install_latest_release "neovim/neovim" "linux64.tar.gz" "nvim"
+install_latest_release "ClementTsang/bottom" "x86_64-unknown-linux-gnu.tar.gz" "btm"
+install_latest_release "aristocratos/btop" "x86_64-linux-musl.tbz"
 install_latest_release "junegunn/fzf" "linux_amd64.tar.gz"
 install_latest_release "sharkdp/fd" "x86_64-unknown-linux-gnu.tar.gz"
 install_latest_release "sharkdp/bat" "x86_64-unknown-linux-gnu.tar.gz"
