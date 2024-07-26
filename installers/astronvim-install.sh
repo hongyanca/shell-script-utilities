@@ -62,7 +62,7 @@ sed -i 's/^\(\s*{\s*import\s*=\s*"astrocommunity\.pack\.rust"\s*}\)/  --\1/' ~/.
 sed -i 's/^\(\s*{\s*import\s*=\s*"astrocommunity\.pack\.python"\s*}\)/  --\1/' ~/.config/nvim/lua/community.lua
 # Copy neovim runtime files
 sudo rm -rf /tmp/neovim
-git clone --depth 1 --branch v0.10.0 https://github.com/neovim/neovim /tmp/neovim
+git clone --depth 1 --branch v0.10.1 https://github.com/neovim/neovim /tmp/neovim
 sudo rm -rf /usr/local/share/nvim
 sudo cp -r /tmp/neovim/runtime /usr/local/share/nvim/
 # Install neovim configurations
