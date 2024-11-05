@@ -133,9 +133,11 @@ install_latest_release "lsd-rs/lsd" "x86_64-unknown-linux-gnu.tar.gz"
 install_latest_release "BurntSushi/ripgrep" "x86_64-unknown-linux-musl.tar.gz" "rg"
 install_latest_release "dundee/gdu" "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
 
+# Install Neovim
+latest_neovim_release=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | jq -r '.tag_name')
 install_latest_release "neovim/neovim" "linux64.tar.gz" "nvim"
 sudo rm -rf /tmp/neovim
-git clone --depth 1 --branch v0.10.2 https://github.com/neovim/neovim /tmp/neovim
+git clone --depth 1 --branch "$latest_neovim_release" https://github.com/neovim/neovim /tmp/neovim
 sudo rm -rf /usr/local/share/nvim
 sudo cp -r /tmp/neovim/runtime /usr/local/share/nvim/
 sudo rm -rf /tmp/neovim
