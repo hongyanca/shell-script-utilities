@@ -1,6 +1,7 @@
 #!/bin/bash
 sudo apt-get clean
 sudo cloud-init clean
+rm ~/.zcompdump*
 sudo rm -rf /root/.bash_history
 function erase_history { local HISTSIZE=0; }
 erase_history && echo '' >~/.bash_history && erase_history
