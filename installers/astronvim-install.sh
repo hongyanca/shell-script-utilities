@@ -31,8 +31,8 @@ elif [[ $LINUX_DISTRO == "debian" ]]; then
   sudo apt-get install -y gcc make libbz2-dev python3-pip
   python3 -m pip install --upgrade pip --break-system-packages
   python3 -m pip install --user --upgrade pynvim --break-system-packages
-  # Install Node.js 20.x
-  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs
+  # Install Node.js 22.x
+  curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt-get install -y nodejs
 else
   echo "Unknown distro" >&2
   exit 1
