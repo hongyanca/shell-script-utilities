@@ -23,9 +23,10 @@ if [[ $LINUX_DISTRO == "rhel" ]]; then
   sudo dnf install -y yum-utils gcc make python3-pip
   python3 -m pip install --upgrade pip
   python3 -m pip install --user --upgrade pynvim
-  # Install Node.js 20.x
+  # Install Node.js 22.x
   # Use `sudo dnf module list nodejs` to list available Node.js versions
-  sudo dnf module install nodejs:20/common
+  # Use `sudo dnf module reset nodejs:20/common` to reset the default version
+  sudo dnf module install nodejs:22/common
 elif [[ $LINUX_DISTRO == "debian" ]]; then
   sudo apt-get update
   sudo apt-get install -y gcc make libbz2-dev python3-pip
@@ -62,7 +63,8 @@ sed -i 's/^\(\s*{\s*import\s*=\s*"astrocommunity\.pack\.rust"\s*}\)/  --\1/' ~/.
 sed -i 's/^\(\s*{\s*import\s*=\s*"astrocommunity\.pack\.python"\s*}\)/  --\1/' ~/.config/nvim/lua/community.lua
 # Copy neovim runtime files
 sudo rm -rf /tmp/neovim
-git clone --depth 1 --branch v0.10.1 https://github.com/neovim/neovim /tmp/neovim
+latest_neovim_release=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | jq -r '.tag_name')
+git clone --depth 1 --branch "$latest_neovim_release" https://github.com/neovim/neovim /tmp/neovim
 sudo rm -rf /usr/local/share/nvim
 sudo cp -r /tmp/neovim/runtime /usr/local/share/nvim/
 # Install neovim configurations
