@@ -46,7 +46,7 @@ install_required_package() {
 }
 
 echo "Installing required packages..."
-REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "autojump" "git")
+REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "autojump" "git" "xclip")
 # Install each package in the packages array
 for package in "${REQUIRED_PKGS[@]}"; do
   install_required_package "$package"
