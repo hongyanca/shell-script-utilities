@@ -46,7 +46,7 @@ install_required_package() {
 }
 
 echo "Installing required packages..."
-REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "autojump" "git" "xclip")
+REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "autojump" "git" "xclip" "zsh-syntax-highlighting")
 # Install each package in the packages array
 for package in "${REQUIRED_PKGS[@]}"; do
   install_required_package "$package"
@@ -141,3 +141,35 @@ git clone --depth 1 --branch "$latest_neovim_release" https://github.com/neovim/
 sudo rm -rf /usr/local/share/nvim
 sudo cp -r /tmp/neovim/runtime /usr/local/share/nvim/
 sudo rm -rf /tmp/neovim
+
+# Display recommended post-installation instructions
+echo "Please add the following lines to your ~/.zshrc or ~/.bashrc:"
+echo -e "${BLUE}#################################${NC}"
+echo "alias ls='lsd'"
+echo "alias l='ls -l'"
+echo "alias la='ls -a'"
+echo "alias ll='ls -la'"
+echo "alias lla='ls -la'"
+echo "alias lt='ls --tree'"
+echo "alias vi='nvim'"
+echo "alias vim='nvim'"
+echo ""
+echo "# Set up fzf key bindings and fuzzy completion"
+echo "source <(fzf --zsh)"
+echo 'export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build} --type f"'
+echo ""
+echo "# https://unix.stackexchange.com/questions/273861/unlimited-history-in-zsh"
+echo "setopt APPEND_HISTORY"
+echo "setopt INC_APPEND_HISTORY"
+echo "setopt SHARE_HISTORY"
+echo "setopt HIST_EXPIRE_DUPS_FIRST"
+echo "setopt HIST_IGNORE_DUPS"
+echo "setopt HIST_IGNORE_ALL_DUPS"
+echo "setopt HIST_SAVE_NO_DUPS"
+echo "setopt HIST_IGNORE_SPACE"
+echo "HISTFILE=$HOME/.zsh_history"
+echo ""
+echo ". /usr/share/autojump/autojump.sh"
+echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+echo -e "${BLUE}#################################${NC}"
+echo ""
