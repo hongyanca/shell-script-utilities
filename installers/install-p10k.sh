@@ -1,10 +1,15 @@
 #!/bin/bash
 
 LINUX_DISTRO="unknown"
-# Function to set the LINUX_DISTRO variable based on the ID_LIKE value
+# Function to set the LINUX_DISTRO variable based on the ID_LIKE or ID value
 get_distro() {
-  # Read the ID_LIKE value from /etc/os-release
+  # Attempt to read the ID_LIKE value from /etc/os-release
   ID_LIKE=$(grep ^ID_LIKE= /etc/os-release | cut -d= -f2 | tr -d '"')
+
+  # If ID_LIKE is empty, fall back to reading the ID value
+  if [[ -z $ID_LIKE ]]; then
+    ID_LIKE=$(grep ^ID= /etc/os-release | cut -d= -f2 | tr -d '"')
+  fi
 
   # Check if ID_LIKE contains "rhel" or "debian"
   if [[ $ID_LIKE == *"rhel"* ]]; then

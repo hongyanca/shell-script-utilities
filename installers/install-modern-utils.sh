@@ -16,6 +16,11 @@ install_required_package() {
   # Get the ID_LIKE value from /etc/os-release
   id_like=$(grep "^ID_LIKE=" /etc/os-release | cut -d= -f2 | tr -d '"')
 
+  # If ID_LIKE is empty, fall back to reading the ID value
+  if [[ -z $id_like ]]; then
+    id_like=$(grep ^ID= /etc/os-release | cut -d= -f2 | tr -d '"')
+  fi
+
   # Function to check if a package is installed
   is_installed() {
     if command -v "$package" &>/dev/null; then
