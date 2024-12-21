@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Create a shell script to download this script and run it
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
+
 # This script automates the process of downloading, extracting, and installing
 # the latest release of modern Linux utilities from GitHub.
 
