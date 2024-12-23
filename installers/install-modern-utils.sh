@@ -54,7 +54,7 @@ install_required_package() {
 }
 
 echo "Installing required packages..."
-REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "autojump" "git" "xclip" "zsh-syntax-highlighting")
+REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "git" "xclip" "zsh-syntax-highlighting")
 # Install each package in the packages array
 for package in "${REQUIRED_PKGS[@]}"; do
   install_required_package "$package"
@@ -140,6 +140,7 @@ install_latest_release "jesseduffield/lazygit" "Linux_x86_64.tar.gz"
 install_latest_release "lsd-rs/lsd" "x86_64-unknown-linux-gnu.tar.gz"
 install_latest_release "BurntSushi/ripgrep" "x86_64-unknown-linux-musl.tar.gz" "rg"
 install_latest_release "dundee/gdu" "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
+install_latest_release "ajeetdsouza/zoxide" "x86_64-unknown-linux-musl.tar.gz"
 
 # Install Neovim
 latest_neovim_release=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | jq -r '.tag_name')
@@ -179,7 +180,7 @@ echo "HISTFILE=$HOME/.zsh_history"
 echo "SAVEHIST=1000000"
 echo "HISTSIZE=1000000"
 echo ""
-echo ". /usr/share/autojump/autojump.sh"
+echo "eval \"\$(zoxide init zsh)\""
 echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 echo -e "${BLUE}#################################${NC}"
 echo ""

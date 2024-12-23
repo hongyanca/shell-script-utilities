@@ -46,7 +46,7 @@ install_required_package() {
 }
 
 echo "Installing required packages..."
-REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "autojump" "git" "xclip")
+REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "git" "xclip")
 # Install each package in the packages array
 for package in "${REQUIRED_PKGS[@]}"; do
   install_required_package "$package"
@@ -132,6 +132,7 @@ install_latest_release "jesseduffield/lazygit" "Linux_arm64.tar.gz"
 install_latest_release "lsd-rs/lsd" "aarch64-unknown-linux-gnu.tar.gz"
 install_latest_release "BurntSushi/ripgrep" "aarch64-unknown-linux-gnu.tar.gz" "rg"
 install_latest_release "dundee/gdu" "linux_arm64.tgz" "gdu_linux_arm64" "gdu"
+install_latest_release "ajeetdsouza/zoxide" "aarch64-unknown-linux-musl.tar.gz"
 
 # Install neovim
 installed_neovim_version=$(nvim --version | head -n 1 | awk '{print $2}')
