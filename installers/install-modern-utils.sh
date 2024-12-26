@@ -87,7 +87,12 @@ install_latest_release() {
   echo "Extracting $asset_filename to $decomp_dir"
   rm -rf "$decomp_dir"
   mkdir -p "$decomp_dir"
-  tar -xf "$asset_filename" -C "$decomp_dir"
+
+  if [[ "$asset_filename" == *.zip ]]; then
+    unzip "$asset_filename" -d "$decomp_dir"
+  else
+    tar -xf "$asset_filename" -C "$decomp_dir"
+  fi
 
   # Use the provided alternative utility name if given
   if [ -n "$alt_util_name" ]; then
@@ -141,6 +146,7 @@ install_latest_release "lsd-rs/lsd" "x86_64-unknown-linux-gnu.tar.gz"
 install_latest_release "BurntSushi/ripgrep" "x86_64-unknown-linux-musl.tar.gz" "rg"
 install_latest_release "dundee/gdu" "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
 install_latest_release "ajeetdsouza/zoxide" "x86_64-unknown-linux-musl.tar.gz"
+install_latest_release "sxyazi/yazi" "x86_64-unknown-linux-musl.zip"
 
 # Install Neovim
 latest_neovim_release=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | jq -r '.tag_name')
