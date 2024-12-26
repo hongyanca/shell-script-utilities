@@ -147,6 +147,53 @@ install_latest_release "BurntSushi/ripgrep" "x86_64-unknown-linux-musl.tar.gz" "
 install_latest_release "dundee/gdu" "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
 install_latest_release "ajeetdsouza/zoxide" "x86_64-unknown-linux-musl.tar.gz"
 install_latest_release "sxyazi/yazi" "x86_64-unknown-linux-musl.zip"
+# Install yazi cli tool ya for plugin/flavor management
+install_latest_release "sxyazi/yazi" "x86_64-unknown-linux-musl.zip" "ya"
+
+print_post_install_info() {
+  # Display recommended post-installation instructions
+  echo ""
+  echo "Please add the following lines to your ~/.zshrc or ~/.bashrc:"
+  echo -e "${BLUE}#################################${NC}"
+  echo "alias ls='lsd'"
+  echo "alias l='ls -l'"
+  echo "alias la='ls -a'"
+  echo "alias ll='ls -la'"
+  echo "alias lla='ls -la'"
+  echo "alias lt='ls --tree'"
+  echo "alias vi='nvim'"
+  echo "alias vim='nvim'"
+  echo ""
+  echo "# Set up fzf key bindings and fuzzy completion"
+  echo "source <(fzf --zsh)"
+  echo 'export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build} --type f"'
+  echo ""
+  echo "# https://unix.stackexchange.com/questions/273861/unlimited-history-in-zsh"
+  echo "setopt APPEND_HISTORY"
+  echo "setopt INC_APPEND_HISTORY"
+  echo "setopt SHARE_HISTORY"
+  echo "setopt HIST_EXPIRE_DUPS_FIRST"
+  echo "setopt HIST_IGNORE_DUPS"
+  echo "setopt HIST_IGNORE_ALL_DUPS"
+  echo "setopt HIST_SAVE_NO_DUPS"
+  echo "setopt HIST_IGNORE_SPACE"
+  echo "HISTFILE=$HOME/.zsh_history"
+  echo "SAVEHIST=1000000"
+  echo "HISTSIZE=1000000"
+  echo ""
+  echo "eval \"\$(zoxide init zsh)\""
+  echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  echo 'function y() {'
+  echo '  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd'
+  echo '  yazi "$@" --cwd-file="$tmp"'
+  echo '  if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then'
+  echo '    builtin cd -- "$cwd"'
+  echo '  fi'
+  echo '  rm -f -- "$tmp"'
+  echo '}'
+  echo -e "${BLUE}#################################${NC}"
+  echo ""
+}
 
 # Install Neovim
 latest_neovim_release=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | jq -r '.tag_name')
@@ -157,36 +204,4 @@ sudo rm -rf /usr/local/share/nvim
 sudo cp -r /tmp/neovim/runtime /usr/local/share/nvim/
 sudo rm -rf /tmp/neovim
 
-# Display recommended post-installation instructions
-echo "Please add the following lines to your ~/.zshrc or ~/.bashrc:"
-echo -e "${BLUE}#################################${NC}"
-echo "alias ls='lsd'"
-echo "alias l='ls -l'"
-echo "alias la='ls -a'"
-echo "alias ll='ls -la'"
-echo "alias lla='ls -la'"
-echo "alias lt='ls --tree'"
-echo "alias vi='nvim'"
-echo "alias vim='nvim'"
-echo ""
-echo "# Set up fzf key bindings and fuzzy completion"
-echo "source <(fzf --zsh)"
-echo 'export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build} --type f"'
-echo ""
-echo "# https://unix.stackexchange.com/questions/273861/unlimited-history-in-zsh"
-echo "setopt APPEND_HISTORY"
-echo "setopt INC_APPEND_HISTORY"
-echo "setopt SHARE_HISTORY"
-echo "setopt HIST_EXPIRE_DUPS_FIRST"
-echo "setopt HIST_IGNORE_DUPS"
-echo "setopt HIST_IGNORE_ALL_DUPS"
-echo "setopt HIST_SAVE_NO_DUPS"
-echo "setopt HIST_IGNORE_SPACE"
-echo "HISTFILE=$HOME/.zsh_history"
-echo "SAVEHIST=1000000"
-echo "HISTSIZE=1000000"
-echo ""
-echo "eval \"\$(zoxide init zsh)\""
-echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-echo -e "${BLUE}#################################${NC}"
-echo ""
+print_post_install_info

@@ -79,7 +79,12 @@ install_latest_release() {
   echo "Extracting $asset_filename to $decomp_dir"
   rm -rf "$decomp_dir"
   mkdir -p "$decomp_dir"
-  tar -xf "$asset_filename" -C "$decomp_dir"
+
+  if [[ "$asset_filename" == *.zip ]]; then
+    unzip "$asset_filename" -d "$decomp_dir"
+  else
+    tar -xf "$asset_filename" -C "$decomp_dir"
+  fi
 
   # Use the provided alternative utility name if given
   if [ -n "$alt_util_name" ]; then
@@ -123,7 +128,7 @@ install_latest_release() {
   rm -rf "$asset_filename" "$decomp_dir"
 }
 
-install_latest_release "ClementTsang/bottom" "aarch64-unknown-linux-gnu.tar.gz" "btm"
+# install_latest_release "ClementTsang/bottom" "aarch64-unknown-linux-gnu.tar.gz" "btm"
 install_latest_release "aristocratos/btop" "aarch64-linux-musl.tbz"
 install_latest_release "junegunn/fzf" "linux_arm64.tar.gz"
 install_latest_release "sharkdp/fd" "aarch64-unknown-linux-gnu.tar.gz"
@@ -133,12 +138,61 @@ install_latest_release "lsd-rs/lsd" "aarch64-unknown-linux-gnu.tar.gz"
 install_latest_release "BurntSushi/ripgrep" "aarch64-unknown-linux-gnu.tar.gz" "rg"
 install_latest_release "dundee/gdu" "linux_arm64.tgz" "gdu_linux_arm64" "gdu"
 install_latest_release "ajeetdsouza/zoxide" "aarch64-unknown-linux-musl.tar.gz"
+install_latest_release "sxyazi/yazi" "aarch64-unknown-linux-musl.zip"
+# Install yazi cli tool ya for plugin/flavor management
+install_latest_release "sxyazi/yazi" "aarch64-unknown-linux-musl.zip" "ya"
+
+print_post_install_info() {
+  # Display recommended post-installation instructions
+  echo ""
+  echo "Please add the following lines to your ~/.zshrc or ~/.bashrc:"
+  echo -e "${BLUE}#################################${NC}"
+  echo "alias ls='lsd'"
+  echo "alias l='ls -l'"
+  echo "alias la='ls -a'"
+  echo "alias ll='ls -la'"
+  echo "alias lla='ls -la'"
+  echo "alias lt='ls --tree'"
+  echo "alias vi='nvim'"
+  echo "alias vim='nvim'"
+  echo ""
+  echo "# Set up fzf key bindings and fuzzy completion"
+  echo "source <(fzf --zsh)"
+  echo 'export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build} --type f"'
+  echo ""
+  echo "# https://unix.stackexchange.com/questions/273861/unlimited-history-in-zsh"
+  echo "setopt APPEND_HISTORY"
+  echo "setopt INC_APPEND_HISTORY"
+  echo "setopt SHARE_HISTORY"
+  echo "setopt HIST_EXPIRE_DUPS_FIRST"
+  echo "setopt HIST_IGNORE_DUPS"
+  echo "setopt HIST_IGNORE_ALL_DUPS"
+  echo "setopt HIST_SAVE_NO_DUPS"
+  echo "setopt HIST_IGNORE_SPACE"
+  echo "HISTFILE=$HOME/.zsh_history"
+  echo "SAVEHIST=1000000"
+  echo "HISTSIZE=1000000"
+  echo ""
+  echo "eval \"\$(zoxide init zsh)\""
+  echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  echo 'function y() {'
+  echo '  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd'
+  echo '  yazi "$@" --cwd-file="$tmp"'
+  echo '  if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then'
+  echo '    builtin cd -- "$cwd"'
+  echo '  fi'
+  echo '  rm -f -- "$tmp"'
+  echo '}'
+  echo -e "${BLUE}#################################${NC}"
+  echo ""
+}
 
 # Install neovim
 installed_neovim_version=$(nvim --version | head -n 1 | awk '{print $2}')
 latest_neovim_release=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | jq -r '.tag_name')
 if [ "$installed_neovim_version" = "$latest_neovim_release" ]; then
   echo -e "${GREEN}✔ ${BLUE}neovim${NC} $installed_neovim_version is up to date."
+  print_post_install_info
   exit 0
 fi
 git clone --depth 1 --branch "$latest_neovim_release" https://github.com/neovim/neovim.git /tmp/neovim-aarch64
@@ -146,3 +200,4 @@ cd /tmp/neovim-aarch64 || exit
 make CMAKE_BUILD_TYPE=Release
 sudo make install
 rm -rf /tmp/neovim-aarch64
+print_post_install_info
