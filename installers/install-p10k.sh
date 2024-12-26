@@ -37,7 +37,8 @@ fi
 rm -rf ~/.p10k
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.p10k
 echo 'source ~/.p10k/powerlevel10k.zsh-theme' >>~/.zshrc
+echo 'typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet' >>~/.zshrc
 
-sudo chsh -s $(which zsh) $USER
+sudo chsh -s "$(which zsh)" "$USER"
 
 echo "Please logout and login again to apply powerlevel10k."
