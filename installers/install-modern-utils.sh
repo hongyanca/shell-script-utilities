@@ -170,7 +170,6 @@ print_post_install_info() {
   echo ""
   echo "# https://unix.stackexchange.com/questions/273861/unlimited-history-in-zsh"
   echo "setopt APPEND_HISTORY"
-  echo "setopt INC_APPEND_HISTORY"
   echo "setopt SHARE_HISTORY"
   echo "setopt HIST_EXPIRE_DUPS_FIRST"
   echo "setopt HIST_IGNORE_DUPS"
