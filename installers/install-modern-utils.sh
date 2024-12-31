@@ -47,6 +47,10 @@ install_required_package() {
     echo "Detected Debian-based distribution. Using apt-get to install $package."
     sudo apt-get update
     sudo apt-get install -y "$package"
+  elif [[ "$id_like" == *"arch"* ]]; then
+    echo "Detected Arch-based distribution. Using pacman to install $package."
+    sudo pacman -Syu
+    sudo pacman -S --noconfirm "$package"
   else
     echo "Unsupported distribution."
     return 1
@@ -146,6 +150,7 @@ install_latest_release "lsd-rs/lsd" "x86_64-unknown-linux-gnu.tar.gz"
 install_latest_release "BurntSushi/ripgrep" "x86_64-unknown-linux-musl.tar.gz" "rg"
 install_latest_release "dundee/gdu" "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
 install_latest_release "ajeetdsouza/zoxide" "x86_64-unknown-linux-musl.tar.gz"
+install_latest_release "fastfetch-cli/fastfetch" "linux-amd64.tar.gz"
 install_latest_release "sxyazi/yazi" "x86_64-unknown-linux-musl.zip"
 # Install yazi cli tool ya for plugin/flavor management
 install_latest_release "sxyazi/yazi" "x86_64-unknown-linux-musl.zip" "ya"
