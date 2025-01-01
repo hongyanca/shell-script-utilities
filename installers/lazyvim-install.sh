@@ -24,10 +24,6 @@ get_distro() {
 }
 get_distro
 
-# Install npm packages globally without sudo on Linux
-mkdir -p "${HOME}/.npm-packages"
-export NPM_PACKAGES="${HOME}/.npm-packages"
-export PATH="$PATH:$NPM_PACKAGES/bin"
 # Install packages based on the LINUX_DISTRO value
 if [[ $LINUX_DISTRO == "rhel" ]]; then
   sudo dnf upgrade --refresh -y
@@ -54,6 +50,11 @@ else
   echo "Unknown distro" >&2
   exit 1
 fi
+
+# Install npm packages globally without sudo on Linux
+mkdir -p "$HOME/.npm-packages"
+export NPM_PACKAGES="$HOME/.npm-packages"
+export PATH="$PATH:$NPM_PACKAGES/bin"
 npm install tree-sitter-cli neovim pyright -g
 
 if [[ $LINUX_DISTRO == "rhel" ]]; then

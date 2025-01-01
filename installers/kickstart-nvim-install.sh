@@ -16,6 +16,8 @@ get_distro() {
     LINUX_DISTRO="rhel"
   elif [[ $ID_LIKE == *"debian"* ]]; then
     LINUX_DISTRO="debian"
+  elif [[ $ID_LIKE == *"arch"* ]]; then
+    LINUX_DISTRO="arch"
   else
     LINUX_DISTRO="unknown"
   fi
@@ -39,24 +41,31 @@ elif [[ $LINUX_DISTRO == "debian" ]]; then
   python3 -m pip install --user --upgrade pynvim --break-system-packages
   # Install Node.js 22.x
   curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt-get install -y nodejs
+elif [[ $LINUX_DISTRO == "arch" ]]; then
+  sudo pacman -Syu
+  sudo pacman -S --needed --noconfirm archlinux-keyring gcc make python python-pip lua nodejs npm
+  python3 -m pip install --upgrade pip --break-system-packages
+  python3 -m pip install --user --upgrade pynvim --break-system-packages
 else
   echo "Unknown distro" >&2
   exit 1
 fi
 
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
-
 # Install npm packages globally without sudo on Linux
-mkdir -p "${HOME}/.npm-packages"
-npm config set prefix "${HOME}/.npm-packages"
-echo 'NPM_PACKAGES="${HOME}/.npm-packages"' >>~/.zshrc
-echo 'export PATH="$PATH:$NPM_PACKAGES/bin"' >>~/.zshrc
-echo 'export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"' >>~/.zshrc
-echo 'NPM_PACKAGES="${HOME}/.npm-packages"' >>~/.bashrc
-echo 'export PATH="$PATH:$NPM_PACKAGES/bin"' >>~/.bashrc
-echo 'export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"' >>~/.bashrc
-source $HOME/.bashrc
+mkdir -p "$HOME/.npm-packages"
+export NPM_PACKAGES="$HOME/.npm-packages"
+export PATH="$PATH:$NPM_PACKAGES/bin"
+npm config set prefix "$HOME/.npm-packages"
 npm install tree-sitter-cli neovim pyright -g
+
+if [[ $LINUX_DISTRO == "rhel" ]]; then
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
+elif [[ $LINUX_DISTRO == "debian" ]]; then
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
+elif [[ $LINUX_DISTRO == "arch" ]]; then
+  sudo pacman -S --needed --noconfirm wget curl ca-certificates gnupg zsh tar make xclip \
+    git unzip p7zip bzip2 jq bat btop fzf fd fastfetch gdu lsd ripgrep yazi zoxide neovim
+fi
 
 rm -rf ~/.local/share/nvim
 rm -rf ~/.local/state/nvim
@@ -71,9 +80,17 @@ sudo rm -rf /usr/local/share/nvim
 sudo cp -r /tmp/neovim/runtime /usr/local/share/nvim/
 sudo rm -rf /tmp/neovim
 
-# Create symbolic links for neovim
-sudo rm -f /usr/bin/nvim
-sudo ln -s /usr/local/bin/nvim /usr/bin/nvim
+if [[ $LINUX_DISTRO == "rhel" ]]; then
+  # Create symbolic links for neovim
+  sudo rm -f /usr/bin/nvim
+  sudo ln -s /usr/local/bin/nvim /usr/bin/nvim
+elif [[ $LINUX_DISTRO == "debian" ]]; then
+  # Create symbolic links for neovim
+  sudo rm -f /usr/bin/nvim
+  sudo ln -s /usr/local/bin/nvim /usr/bin/nvim
+elif [[ $LINUX_DISTRO == "arch" ]]; then
+  /usr/bin/nvim --version
+fi
 
 # Install neovim configurations
 nvim --headless -c 'quitall'
