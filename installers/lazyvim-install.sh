@@ -63,7 +63,7 @@ elif [[ $LINUX_DISTRO == "debian" ]]; then
   bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
 elif [[ $LINUX_DISTRO == "arch" ]]; then
   sudo pacman -S --needed --noconfirm wget curl ca-certificates gnupg zsh tar make xclip \
-    git unzip p7zip bzip2 jq bat btop fzf fd fastfetch gdu lsd ripgrep yazi zoxide neovim
+    git unzip p7zip bzip2 jq bat btop fzf fd fastfetch gdu lsd ripgrep yazi zoxide lazygit neovim
 fi
 
 rm -rf ~/.local/share/nvim-lazyvim
