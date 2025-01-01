@@ -65,9 +65,10 @@ for package in "${REQUIRED_PKGS[@]}"; do
 done
 
 # Function to install the latest release of a GitHub repository
-# Usage: install_latest_release "repo" "asset_suffix" ["alt_util_name"] ["symlink_name"]
+# Usage: install_latest_release "repo" "cmd_local_ver" "asset_suffix" ["alt_util_name"] ["symlink_name"]
 # Parameters:
 # - repo: The GitHub repository in the format "owner/repo" (e.g., "junegunn/fzf").
+# - cmd_local_ver: The string that fetches the installed version of the utility.
 # - asset_suffix: The suffix of the asset file to download (e.g., "linux_amd64.tar.gz").
 # - alt_util_name (optional): An alternative name for the utility to use during installation.
 # - symlink_name (optional): A name for creating a symbolic link to the installed utility.
@@ -75,9 +76,24 @@ done
 # Example: install_latest_release "BurntSushi/ripgrep" "x86_64-unknown-linux-musl.tar.gz" "rg"
 # Example: install_latest_release "dundee/gdu" "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
 install_latest_release() {
-  local repo=$1 asset_suffix=$2 alt_util_name=$3 symlink_name=$4
-  local latest_release asset_filename asset_url decomp_dir
+  local repo=$1 cmd_local_ver=$2 asset_suffix=$3 alt_util_name=$4 symlink_name=5$
+  local installed_ver latest_ver latest_release asset_filename asset_url decomp_dir
   local util_bin_fn util_name util_path
+
+  installed_ver=$(eval "$cmd_local_ver" 2>/dev/null)
+  latest_ver=$(curl -s "https://api.github.com/repos/$repo/releases/latest" | jq -r '.tag_name')
+  # Remove 'v' prefix from latest_ver if it exists
+  if [[ $latest_ver == v* ]]; then
+    latest_ver=${latest_ver#v}
+  fi
+  # Compare versions
+  if [ "$installed_ver" == "$latest_ver" ]; then
+    echo -e "${GREEN}✔ ${BLUE}$repo is already up to date.${NC}"
+    return 1
+  else
+    echo
+    echo "Installing $repo v$latest_ver..."
+  fi
 
   util_name=$(echo "$repo" | awk -F'/' '{print $2}')
   latest_release=$(curl -s "https://api.github.com/repos/$repo/releases/latest")
@@ -138,28 +154,52 @@ install_latest_release() {
 
   printf "Cleaning up...\n\n"
   rm -rf "$asset_filename" "$decomp_dir"
+  return 0
 }
 
-install_latest_release "ClementTsang/bottom" "x86_64-unknown-linux-gnu.tar.gz" "btm"
-install_latest_release "aristocratos/btop" "x86_64-linux-musl.tbz"
-install_latest_release "junegunn/fzf" "linux_amd64.tar.gz"
-install_latest_release "sharkdp/fd" "x86_64-unknown-linux-gnu.tar.gz"
-install_latest_release "sharkdp/bat" "x86_64-unknown-linux-gnu.tar.gz"
-install_latest_release "jesseduffield/lazygit" "Linux_x86_64.tar.gz"
-install_latest_release "lsd-rs/lsd" "x86_64-unknown-linux-gnu.tar.gz"
-install_latest_release "BurntSushi/ripgrep" "x86_64-unknown-linux-musl.tar.gz" "rg"
-install_latest_release "dundee/gdu" "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
-install_latest_release "ajeetdsouza/zoxide" "x86_64-unknown-linux-musl.tar.gz"
-install_latest_release "fastfetch-cli/fastfetch" "linux-amd64.tar.gz"
-install_latest_release "sxyazi/yazi" "x86_64-unknown-linux-musl.zip"
+install_latest_release "aristocratos/btop" \
+  "btop --version | head -1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-linux-musl.tbz"
+install_latest_release "junegunn/fzf" \
+  "fzf --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "linux_amd64.tar.gz"
+install_latest_release "sharkdp/fd" \
+  "fd --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-unknown-linux-gnu.tar.gz"
+install_latest_release "sharkdp/bat" \
+  "bat --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-unknown-linux-gnu.tar.gz"
+install_latest_release "jesseduffield/lazygit" \
+  "lazygit --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1" \
+  "Linux_x86_64.tar.gz"
+install_latest_release "lsd-rs/lsd" \
+  "lsd --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-unknown-linux-gnu.tar.gz"
+install_latest_release "BurntSushi/ripgrep" \
+  "rg --version | head -1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-unknown-linux-musl.tar.gz" "rg"
+install_latest_release "dundee/gdu" \
+  "gdu --version | head -1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
+install_latest_release "ajeetdsouza/zoxide" \
+  "zoxide --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-unknown-linux-musl.tar.gz"
+install_latest_release "fastfetch-cli/fastfetch" \
+  "fastfetch --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "linux-amd64.tar.gz"
+install_latest_release "sxyazi/yazi" \
+  "yazi --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-unknown-linux-musl.zip"
 # Install yazi cli tool ya for plugin/flavor management
-install_latest_release "sxyazi/yazi" "x86_64-unknown-linux-musl.zip" "ya"
+install_latest_release "sxyazi/yazi" \
+  "ya --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-unknown-linux-musl.zip" "ya"
 
 print_post_install_info() {
   # Display recommended post-installation instructions
   echo ""
-  echo "Please add the following lines to your ~/.zshrc or ~/.bashrc:"
-  echo -e "${BLUE}#################################${NC}"
+  echo "Please add the following lines to your ~/.zshrc file"
+  echo -e "${BLUE}-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~${NC}"
   echo "alias ls='lsd'"
   echo "alias l='ls -l'"
   echo "alias la='ls -a'"
@@ -195,13 +235,15 @@ print_post_install_info() {
   echo '  fi'
   echo '  rm -f -- "$tmp"'
   echo '}'
-  echo -e "${BLUE}#################################${NC}"
+  echo -e "${BLUE}-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~${NC}"
   echo ""
 }
 
 # Install Neovim
 latest_neovim_release=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | jq -r '.tag_name')
-install_latest_release "neovim/neovim" "linux64.tar.gz" "nvim"
+install_latest_release "neovim/neovim" \
+  "nvim --version | head -1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "linux64.tar.gz" "nvim"
 sudo rm -rf /tmp/neovim
 git clone --depth 1 --branch "$latest_neovim_release" https://github.com/neovim/neovim /tmp/neovim
 sudo rm -rf /usr/local/share/nvim
