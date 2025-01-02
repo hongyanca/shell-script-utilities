@@ -53,18 +53,12 @@ fi
 
 # Install npm packages globally without sudo on Linux
 mkdir -p "$HOME/.npm-packages"
+npm config set prefix "$HOME/.npm-packages"
 export NPM_PACKAGES="$HOME/.npm-packages"
 export PATH="$PATH:$NPM_PACKAGES/bin"
 npm install tree-sitter-cli neovim pyright -g
 
-if [[ $LINUX_DISTRO == "rhel" ]]; then
-  bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
-elif [[ $LINUX_DISTRO == "debian" ]]; then
-  bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
-elif [[ $LINUX_DISTRO == "arch" ]]; then
-  sudo pacman -S --needed --noconfirm wget curl ca-certificates gnupg zsh tar make xclip \
-    git unzip p7zip bzip2 jq bat btop fzf fd fastfetch gdu lsd ripgrep yazi zoxide lazygit neovim
-fi
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
 
 rm -rf ~/.local/share/nvim-lazyvim
 rm -rf ~/.local/state/nvim-lazyvim

@@ -12,6 +12,14 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+print_post_install_info() {
+  # Display recommended post-installation instructions
+  echo ""
+  echo "Instructions for setting up rc files:"
+  echo -e " ${BLUE}https://github.com/hongyanca/linux-dotfiles${NC}"
+  echo ""
+}
+
 # Function to install a required package based on the distribution
 install_required_package() {
   package=$1
@@ -43,11 +51,11 @@ install_required_package() {
   if [[ "$id_like" == *"rhel"* ]]; then
     echo "Detected RHEL-based distribution. Using dnf to install $package."
     sudo dnf upgrade --refresh -y
-    sudo dnf install -y "util-linux-user" "$package"
+    sudo dnf install -y "util-linux-user" "zsh-syntax-highlighting" "$package"
   elif [[ "$id_like" == *"debian"* ]]; then
     echo "Detected Debian-based distribution. Using apt-get to install $package."
     sudo apt-get update
-    sudo apt-get install -y "passwd" "$package"
+    sudo apt-get install -y "passwd" "zsh-syntax-highlighting" "$package"
   elif [[ "$id_like" == *"arch"* ]]; then
     echo "Detected Arch-based distribution. Using pacman to install $package."
     sudo pacman -S --needed archlinux-keyring
@@ -56,6 +64,7 @@ install_required_package() {
     # Arch Linux is a rolling distro, so it already provides the latest packages
     sudo pacman -S --needed --noconfirm btop fzf fd bat git-delta lazygit lsd ripgrep gdu zoxide fastfetch yazi neovim
     # Don't need to install binary releases for GitHub
+    print_post_install_info
     exit 0
   else
     echo "Unsupported distribution."
@@ -64,7 +73,7 @@ install_required_package() {
 }
 
 echo "Installing required packages..."
-REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "git" "xclip" "zsh-syntax-highlighting")
+REQUIRED_PKGS=("wget" "curl" "zsh" "tar" "jq" "unzip" "p7zip" "bzip2" "make" "git" "xclip")
 # Install each package in the packages array
 for package in "${REQUIRED_PKGS[@]}"; do
   install_required_package "$package"
@@ -203,50 +212,6 @@ install_latest_release "sxyazi/yazi" \
 install_latest_release "sxyazi/yazi" \
   "ya --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
   "x86_64-unknown-linux-musl.zip" "ya"
-
-print_post_install_info() {
-  # Display recommended post-installation instructions
-  echo ""
-  echo "Please add the following lines to your ~/.zshrc file"
-  echo -e "${BLUE}-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~${NC}"
-  echo "alias ls='lsd'"
-  echo "alias l='ls -l'"
-  echo "alias la='ls -a'"
-  echo "alias ll='ls -la'"
-  echo "alias lla='ls -la'"
-  echo "alias lt='ls --tree'"
-  echo "alias vi='nvim'"
-  echo "alias vim='nvim'"
-  echo ""
-  echo "# Set up fzf key bindings and fuzzy completion"
-  echo "source <(fzf --zsh)"
-  echo 'export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build} --type f"'
-  echo ""
-  echo "# https://unix.stackexchange.com/questions/273861/unlimited-history-in-zsh"
-  echo "setopt APPEND_HISTORY"
-  echo "setopt SHARE_HISTORY"
-  echo "setopt HIST_EXPIRE_DUPS_FIRST"
-  echo "setopt HIST_IGNORE_DUPS"
-  echo "setopt HIST_IGNORE_ALL_DUPS"
-  echo "setopt HIST_SAVE_NO_DUPS"
-  echo "setopt HIST_IGNORE_SPACE"
-  echo "HISTFILE=$HOME/.zsh_history"
-  echo "SAVEHIST=1000000"
-  echo "HISTSIZE=1000000"
-  echo ""
-  echo "eval \"\$(zoxide init zsh)\""
-  echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-  echo 'function y() {'
-  echo '  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd'
-  echo '  yazi "$@" --cwd-file="$tmp"'
-  echo '  if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then'
-  echo '    builtin cd -- "$cwd"'
-  echo '  fi'
-  echo '  rm -f -- "$tmp"'
-  echo '}'
-  echo -e "${BLUE}-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~${NC}"
-  echo ""
-}
 
 # Install Neovim
 latest_neovim_release=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" | jq -r '.tag_name')
