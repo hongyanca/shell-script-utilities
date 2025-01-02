@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Create a shell script to download this script and run it
 # bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
@@ -91,7 +91,7 @@ done
 # Example: install_latest_release "BurntSushi/ripgrep" "x86_64-unknown-linux-musl.tar.gz" "rg"
 # Example: install_latest_release "dundee/gdu" "linux_amd64_static.tgz" "gdu_linux_amd64_static" "gdu"
 install_latest_release() {
-  local repo=$1 cmd_local_ver=$2 asset_suffix=$3 alt_util_name=$4 symlink_name=5$
+  local repo=$1 cmd_local_ver=$2 asset_suffix=$3 alt_util_name=$4 symlink_name=$5
   local installed_ver latest_ver latest_release asset_filename asset_url decomp_dir
   local util_bin_fn util_name util_path
 
