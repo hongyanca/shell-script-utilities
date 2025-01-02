@@ -53,7 +53,7 @@ install_required_package() {
     sudo pacman -Syu
     sudo pacman -S --needed --noconfirm "$package"
     # Arch Linux is a rolling distro, so it already provides the latest packages
-    sudo pacman -S --needed --noconfirm btop fzf fd bat lazygit lsd ripgrep gdu zoxide fastfetch yazi neovim
+    sudo pacman -S --needed --noconfirm btop fzf fd bat git-delta lazygit lsd ripgrep gdu zoxide fastfetch yazi neovim
     # Don't need to install binary releases for GitHub
     exit 0
   else
@@ -177,6 +177,9 @@ install_latest_release "sharkdp/bat" \
 install_latest_release "jesseduffield/lazygit" \
   "lazygit --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1" \
   "Linux_x86_64.tar.gz"
+install_latest_release "dandavison/delta" \
+  "delta --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
+  "x86_64-unknown-linux-gnu.tar.gz"
 install_latest_release "lsd-rs/lsd" \
   "lsd --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'" \
   "x86_64-unknown-linux-gnu.tar.gz"
