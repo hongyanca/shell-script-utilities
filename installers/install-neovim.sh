@@ -56,7 +56,16 @@ mkdir -p "$HOME/.npm-packages"
 npm config set prefix "$HOME/.npm-packages"
 export NPM_PACKAGES="$HOME/.npm-packages"
 export PATH="$PATH:$NPM_PACKAGES/bin"
-npm install tree-sitter-cli neovim pyright -g
+USER_GRP="$(id -un):$(id -gn)"
+sudo mkdir -p /usr/local/n
+sudo chown -R $USER_GRP /usr/local/n
+sudo chown -R $USER_GRP /usr/local/lib
+sudo chown -R $USER_GRP /usr/local/bin
+sudo chown -R $USER_GRP /usr/local/include
+sudo chown -R $USER_GRP /usr/local/share
+sudo chown -R $USER_GRP /usr/local/share/man/
+echo "Installing Node.js global packages..."
+npm install tree-sitter-cli neovim pyright n npm-check -g
 
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/shell-script-utilities/main/installers/install-modern-utils.sh)"
 
