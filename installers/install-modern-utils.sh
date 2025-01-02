@@ -49,8 +49,13 @@ install_required_package() {
     sudo apt-get install -y "$package"
   elif [[ "$id_like" == *"arch"* ]]; then
     echo "Detected Arch-based distribution. Using pacman to install $package."
+    sudo pacman -S --needed archlinux-keyring
     sudo pacman -Syu
-    sudo pacman -S --noconfirm "$package"
+    sudo pacman -S --needed --noconfirm "$package"
+    # Arch Linux is a rolling distro, so it already provides the latest packages
+    sudo pacman -S --needed --noconfirm btop fzf fd bat lazygit lsd ripgrep gdu zoxide fastfetch yazi neovim
+    # Don't need to install binary releases for GitHub
+    exit 0
   else
     echo "Unsupported distribution."
     return 1
