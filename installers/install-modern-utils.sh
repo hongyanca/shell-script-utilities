@@ -42,11 +42,12 @@ install_required_package() {
   # Check if ID_LIKE contains 'rhel' or 'debian' and install the package
   if [[ "$id_like" == *"rhel"* ]]; then
     echo "Detected RHEL-based distribution. Using dnf to install $package."
-    sudo dnf install -y "$package"
+    sudo dnf upgrade --refresh -y
+    sudo dnf install -y "util-linux-user" "$package"
   elif [[ "$id_like" == *"debian"* ]]; then
     echo "Detected Debian-based distribution. Using apt-get to install $package."
     sudo apt-get update
-    sudo apt-get install -y "$package"
+    sudo apt-get install -y "passwd" "$package"
   elif [[ "$id_like" == *"arch"* ]]; then
     echo "Detected Arch-based distribution. Using pacman to install $package."
     sudo pacman -S --needed archlinux-keyring
