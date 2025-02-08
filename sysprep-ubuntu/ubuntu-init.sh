@@ -50,10 +50,6 @@ sudo NEEDRESTART_MODE=a apt-get install -y --install-recommends \
   ubuntu-advantage-tools ntp iperf3 jq bat btop gdu
 
 ################################################################################
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/dotfiles-linux/refs/heads/main/scripts/scripts/install-modern-utils.sh)"
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/hongyanca/dotfiles-linux/refs/heads/main/scripts/scripts/install-neovim.sh)"
-
-################################################################################
 cat <<EOF >~/.nanorc
 set softwrap
 set tabsize 4
