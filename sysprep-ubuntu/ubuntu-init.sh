@@ -47,7 +47,7 @@ sudo NEEDRESTART_MODE=a apt-get install -y --install-recommends \
   wget curl bzip2 gcc make p7zip p7zip-full p7zip-rar unzip zsh fish \
   cifs-utils nfs-common git git-lfs conntrackd containerd.io \
   libbz2-dev python3-pip passwd zsh-syntax-highlighting stow \
-  ubuntu-advantage-tools ntp iperf3 jq bat btop gdu
+  iputils-ping dnsutils ubuntu-advantage-tools ntp iperf3 jq bat btop gdu
 
 ################################################################################
 cat <<EOF >~/.nanorc
@@ -57,5 +57,22 @@ set tabstospaces
 #set linenumbers
 unset mouse
 EOF
-
 sudo cp ~/.nanorc /root/.nanorc
+
+################################################################################
+sudo mkdir -p /etc/cloud/cloud.cfg.d/
+cat <<EOF >/tmp/99-fake_cloud.cfg
+# Configure cloud-init for NoCloud
+datasource_list: [ NoCloud, None ]
+datasource:
+  NoCloud:
+    fs_label: system-boot
+EOF
+sudo cp -f /tmp/99-fake_cloud.cfg /etc/cloud/cloud.cfg.d/99-fake_cloud.cfg
+sudo rm -f /tmp/99-fake_cloud.cfg
+
+cat <<EOF >/tmp/99-disable-network-config.cfg
+network: {config: disabled}
+EOF
+sudo cp -f /tmp/99-disable-network-config.cfg /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+sudo rm -f /tmp/99-disable-network-config.cfg
