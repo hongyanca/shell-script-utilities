@@ -47,7 +47,7 @@ sudo NEEDRESTART_MODE=a apt-get install -y --install-recommends \
   wget curl bzip2 gcc make p7zip p7zip-full p7zip-rar unzip zsh fish \
   cifs-utils nfs-common git git-lfs conntrackd containerd.io \
   libbz2-dev python3-pip passwd zsh-syntax-highlighting stow \
-  iputils-ping dnsutils ubuntu-advantage-tools ntp iperf3 jq bat btop gdu
+  iputils-ping dnsutils ntp iperf3 jq bat btop gdu
 
 ################################################################################
 cat <<EOF >~/.nanorc
