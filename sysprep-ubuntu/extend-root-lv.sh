@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Reference https://gist.github.com/rafaelfoster/8741314
 # Rescan devices to detect new space when disk is resized
 echo 1 | sudo tee /sys/block/sda/device/rescan >/dev/null
+sudo partprobe
 
 # Please remember, modifying disk partitions can be risky and may result in data loss.
 # Always ensure that you have a backup of your important data before proceeding with
@@ -27,13 +28,14 @@ read -p "Are you sure you want to create a new partition (/dev/sda${new_part_num
 confirmation=${confirmation:-N} # Set default value to 'N'
 
 if [[ $confirmation =~ ^[Yy]$ ]]; then
-    # If confirmation is 'yes', proceed with creating the new partition
-    echo "Creating a new partition (/dev/sda${new_part_num}) starting at ${end_of_last_part}MB"
-    sudo parted /dev/sda --script mkpart primary ext4 "${end_of_last_part}MB" 100%
-    echo "New partition (/dev/sda${new_part_num}) created successfully."
+  # If confirmation is 'yes', proceed with creating the new partition
+  echo "Creating a new partition (/dev/sda${new_part_num}) starting at ${end_of_last_part}MB"
+  sudo parted /dev/sda --script mkpart primary ext4 "${end_of_last_part}MB" 100%
+  sudo partprobe
+  echo "New partition (/dev/sda${new_part_num}) created successfully."
 else
-    # If confirmation is 'no', exit the script
-    echo "Partition creation cancelled."
+  # If confirmation is 'no', exit the script
+  echo "Partition creation cancelled."
 fi
 
 # Create a physical volume
