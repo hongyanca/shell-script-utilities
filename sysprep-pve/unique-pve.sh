@@ -25,21 +25,25 @@ sudo systemctl start pve-cluster pvestatd
 # Delete any directories in /etc/pve/nodes other than the one for the current hostname.
 sudo find /etc/pve/nodes -mindepth 1 -maxdepth 1 -type d ! -name "$(hostname)" -exec rm -rf {} +
 echo "Content of /etc/pve/nodes directory:"
-ls -l /etc/pve/nodes
+sudo ls /etc/pve/nodes
 echo "Stopping services: pve-cluster pvestatd"
 sudo systemctl stop pve-cluster pvestatd
 
 # Change the hostname
+echo
 echo "Step 1: Change nodename/hostname"
 new_hostname=$(prompt_input "Enter the new hostname")
 old_hostname=$(hostname)
 sudo sed -i "s/\b$old_hostname\b/$new_hostname/g" /etc/hosts
 sudo hostnamectl set-hostname "$new_hostname"
 echo "Hostname changed from $old_hostname to $new_hostname"
+echo
 echo "Updated /etc/hosts file:"
 cat /etc/hosts
+echo
 echo "Updated /etc/hostname file:"
 cat /etc/hostname
+echo
 # Update config.db
 echo "Node name in /var/lib/pve-cluster/config.db before database update"
 sudo sqlite3 /var/lib/pve-cluster/config.db "SELECT * FROM tree WHERE name = '$old_hostname';"
@@ -67,6 +71,7 @@ new_ipv4=$(prompt_input "Enter the new IP address for iface Management (e.g., 19
 echo "Backing up /etc/network/interfaces"
 sudo cp /etc/network/interfaces "$backup_dir/interfaces.backup"
 # Replace the IP address under `iface Management inet static`
+echo
 echo "Updating /etc/network/interfaces with the new IP address"
 sudo sed -i "s/$current_ip/$new_ipv4/g" /etc/network/interfaces
 # Show the content of the new /etc/network/interfaces file
@@ -76,6 +81,7 @@ echo "Updating /etc/hosts file"
 sudo sed -i "s/$current_ip/$new_ipv4/g" /etc/hosts
 echo "Updated /etc/hosts file:"
 cat /etc/hosts
+echo
 sudo /usr/bin/pvebanner
 echo "Updated banner:"
 sudo cat /etc/issue
@@ -99,8 +105,16 @@ echo "SSH host keys regenerated."
 echo "******************************************"
 echo
 
+# Regenerate Proxmox certificates
+# https://kimmo.suominen.com/blog/2019/12/regenerating-proxmox-certificates/
+echo "Step 5: Regenerate Proxmox certificates"
+cd /etc/pve
+sudo rm pve-root-ca.pem priv/pve-root-ca.key nodes/*/pve-ssl.{key,pem}
+sudo pvecm updatecerts --force
+sudo systemctl restart pveproxy
+
 # Clear logs
-echo "Step 5: Clearing logs"
+echo "Step 6: Clearing logs"
 sudo find /var/log -type f -exec truncate -s 0 {} \;
 echo "Logs cleared."
 echo "******************************************"
