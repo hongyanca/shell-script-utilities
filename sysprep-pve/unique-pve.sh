@@ -77,8 +77,10 @@ sudo sed -i "s/$current_ip/$new_ipv4/g" /etc/network/interfaces
 # Show the content of the new /etc/network/interfaces file
 echo "The updated /etc/network/interfaces file:"
 cat /etc/network/interfaces
+echo
 echo "Updating /etc/hosts file"
 sudo sed -i "s/$current_ip/$new_ipv4/g" /etc/hosts
+echo
 echo "Updated /etc/hosts file:"
 cat /etc/hosts
 echo
@@ -108,6 +110,8 @@ echo
 # Regenerate Proxmox certificates
 # https://kimmo.suominen.com/blog/2019/12/regenerating-proxmox-certificates/
 echo "Step 5: Regenerate Proxmox certificates"
+echo "Starting services: pve-cluster pvestatd"
+sudo systemctl start pve-cluster pvestatd
 cd /etc/pve
 sudo rm pve-root-ca.pem priv/pve-root-ca.key nodes/*/pve-ssl.{key,pem}
 sudo pvecm updatecerts --force
