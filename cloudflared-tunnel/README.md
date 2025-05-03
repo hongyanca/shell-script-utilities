@@ -79,6 +79,62 @@ cf-tun-hello        2/2     2            2           2m
 
 
 
+### Authenticated Docker Hub image pulls in Kubernetes
+
+https://medium.com/@iainmcgin/authenticated-docker-hub-image-pulls-in-kubernetes-5e0dbab3c228
+
+https://docs.docker.com/docker-hub/usage/
+
+Authenticated personal account has 200 pulls per 6 hours. Create a PAT in dockerhub
+
+Create a namespaced k8s secret `dockerhub-image-pull-secret` in namespace `self-hosted`:
+
+```text-x-trilium-auto
+kubectl create secret docker-registry dockerhub-image-pull-secret \
+  --docker-server=https://index.docker.io/v1/ \
+  --docker-username=DOCKERHUB_USERNAME \
+  --docker-password=dckr_pat_XXXXXXXXXXXXXXXXXXXXXXXX \
+  --namespace=self-hosted
+```
+
+Verify the created secret:
+
+```
+kubectl get secret dockerhub-image-pull-secret --namespace=self-hosted -o yaml
+
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdX...=
+kind: Secret
+metadata:
+  creationTimestamp: "2025-04-20T02:44:17Z"
+  name: dockerhub-image-pull-secret
+  namespace: self-hosted
+  resourceVersion: "144016177"
+  uid: a4a89a2e-4769-420b-8325-237f425abea2
+type: kubernetes.io/dockerconfigjson
+```
+
+Add the following two lines under `spec` on the same indentation level of `containers` to deployment yaml:
+
+```
+      imagePullSecrets:
+        - name: dockerhub-image-pull-secret
+```
+
+It looks like this:
+
+```
+     spec:
++      imagePullSecrets:
++        - name: dockerhub-image-pull-secret
+       containers:
+         - name: searxng
+           image: searxng/searxng:latest
+```
+
+
+
 ## Contributions
 
 Contributions to this repository are welcome. Please ensure that you test any changes thoroughly before submitting a pull request.

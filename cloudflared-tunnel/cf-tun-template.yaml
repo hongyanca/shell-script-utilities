@@ -14,6 +14,8 @@ spec:
       labels:
         app: CF-TUN-NAME
     spec:
+      imagePullSecrets:
+        - name: dockerhub-image-pull-secret
       containers:
       - name: CF-TUN-NAME
         image: cloudflare/cloudflared:latest
