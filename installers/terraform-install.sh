@@ -1,8 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-sudo apt update && sudo apt install gpg
-wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt-get update
-sudo apt-get install -y terraform
+# sudo dnf install -y curl jq unzip
+
+# Fetch latest release tag (e.g., v1.12.2)
+TAG=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name)
+
+# Remove leading 'v'
+VERSION=${TAG#v}
+
+# Construct the URL
+URL="https://releases.hashicorp.com/terraform/$VERSION/terraform_${VERSION}_linux_amd64.zip"
+
+cd /tmp
+rm -rf /tmp/terraform* /tmp/LICENSE.txt
+wget "$URL"
+unzip "terraform_${VERSION}_linux_amd64.zip"
+sudo cp -f terraform /usr/local/bin/terraform
+
+echo
+echo "terraform has been installed to /usr/local/bin"
+/usr/local/bin/terraform --version
+
+rm -rf /tmp/terraform* /tmp/LICENSE.txt
