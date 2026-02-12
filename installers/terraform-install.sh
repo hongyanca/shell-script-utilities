@@ -2,7 +2,7 @@
 
 # sudo dnf install -y curl jq unzip
 
-# Fetch latest release tag (e.g., v1.12.2)
+# Fetch latest release tag (e.g., v1.14.9)
 TAG=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r .tag_name)
 
 # Remove leading 'v'
