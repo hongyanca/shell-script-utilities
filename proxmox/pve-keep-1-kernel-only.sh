@@ -4,9 +4,9 @@
 current_kernel=$(uname -r)
 
 # Get the list of installed kernels
-installed_kernels=$(dpkg --list | grep proxmox-kernel | awk '{ print $2 }' | grep -Eo '[5-6]\.[0-9]+\.[0-9]+-[0-9]+-pve' | sort -V)
+installed_kernels=$(dpkg --list | grep proxmox-kernel | awk '{ print $2 }' | grep -Eo '[6-7]\.[0-9]+\.[0-9]+-[0-9]+-pve' | sort -V)
 # List of kernels for Oracle Cloud
-# installed_kernels=$(dpkg --list | grep linux-image | awk '{ print $2 }' | grep -Eo '[5-6]\.[0-9]+\.[0-9]+-[0-9]+-oracle' | sort -V)
+# installed_kernels=$(dpkg --list | grep linux-image | awk '{ print $2 }' | grep -Eo '[6-7]\.[0-9]+\.[0-9]+-[0-9]+-oracle' | sort -V)
 
 # Define how many latest kernels to keep
 keep_latest=1
